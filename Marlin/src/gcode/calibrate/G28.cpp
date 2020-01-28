@@ -371,9 +371,21 @@ void GcodeSuite::G28(const bool always_home_all) {
 
       #if ENABLED(DUAL_X_CARRIAGE)
 
+        #if ENABLED(SENSORLESS_HOMING)
+            tmc_enable_stallguard(stepperX);
+            tmc_enable_stallguard(stepperY);
+            #if AXIS_HAS_STALLGUARD(X2)
+              tmc_enable_stallguard(stepperX2);
+            #endif
+            #if AXIS_HAS_STALLGUARD(Y2)
+              tmc_enable_stallguard(stepperY2);
+            #endif
+        #endif
+
         // Always home the 2nd (right) extruder first
         active_extruder = 1;
         homeaxis(X_AXIS);
+        safe_delay(1000);
 
         // Remember this extruder's position for later tool change
         inactive_extruder_x_pos = current_position.x;
@@ -440,12 +452,25 @@ void GcodeSuite::G28(const bool always_home_all) {
         slow_homing = begin_slow_homing();
       #endif
 
+      #if ENABLED(SENSORLESS_HOMING)
+          tmc_enable_stallguard(stepperX);
+          tmc_enable_stallguard(stepperY);
+          #if AXIS_HAS_STALLGUARD(X2)
+            tmc_enable_stallguard(stepperX2);
+          #endif
+          #if AXIS_HAS_STALLGUARD(Y2)
+            tmc_enable_stallguard(stepperY2);
+          #endif
+      #endif
+
       // Always home the 2nd (right) extruder first
       active_extruder = 1;
       homeaxis(X_AXIS);
 
       // Remember this extruder's position for later tool change
       inactive_extruder_x_pos = current_position.x;
+
+      safe_delay(1000);
 
       // Home the 1st (left) extruder
       active_extruder = 0;

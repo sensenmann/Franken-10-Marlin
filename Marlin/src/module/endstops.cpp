@@ -48,6 +48,9 @@
   #include "../feature/joystick.h"
 #endif
 
+#define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
+#include "../../core/debug_out.h"
+
 Endstops endstops;
 
 // private:
@@ -583,6 +586,7 @@ void Endstops::update() {
   #endif
 
   #if HAS_Z_MIN && !Z_SPI_SENSORLESS
+    safe_delay(10);
     UPDATE_ENDSTOP_BIT(Z, MIN);
     #if Z_MULTI_ENDSTOPS
       #if HAS_Z2_MIN
@@ -602,6 +606,8 @@ void Endstops::update() {
 
   // When closing the gap check the enabled probe
   #if HAS_CUSTOM_PROBE_PIN
+    safe_delay(10);
+
     UPDATE_ENDSTOP_BIT(Z, MIN_PROBE);
   #endif
 
@@ -792,9 +798,18 @@ void Endstops::update() {
   bool Endstops::tmc_spi_homing_check() {
     bool hit = false;
     #if X_SPI_SENSORLESS
-      if (tmc_spi_homing.x && stepperX.test_stall_status()) {
-        SBI(live_state, X_STOP);
-        hit = true;
+      if (stepper.movement_extruder() == 0) {
+        if (tmc_spi_homing.x && stepperX.test_stall_status()) {
+          DEBUG_ECHOLNPGM("************* HIT AXIS X");
+          SBI(live_state, X_MIN);
+          hit = true;
+        }
+      } else {
+        if (tmc_spi_homing.x && stepperX2.test_stall_status()) {
+          DEBUG_ECHOLNPGM("************* HIT AXIS X2");
+          SBI(live_state, X_MAX);
+          hit = true;
+        }
       }
     #endif
     #if Y_SPI_SENSORLESS
@@ -814,7 +829,8 @@ void Endstops::update() {
 
   void Endstops::clear_endstop_state() {
     #if X_SPI_SENSORLESS
-      CBI(live_state, X_STOP);
+      CBI(live_state, X_MIN);
+      CBI(live_state, X_MAX);
     #endif
     #if Y_SPI_SENSORLESS
       CBI(live_state, Y_STOP);
