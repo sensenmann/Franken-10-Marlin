@@ -547,7 +547,7 @@
   #define X1_MAX_POS 280  // Set a maximum so the first X-carriage can't hit the parked second X-carriage
 
   #define X2_MIN_POS      20       // Set a minimum to ensure the  second X-carriage can't hit the parked first X-carriage
-  #define X2_MAX_POS   386.5       // Set this to the distance between toolheads when both heads are homed
+  #define X2_MAX_POS   385.8       // Set this to the distance between toolheads when both heads are homed
   #define X2_HOME_DIR      1       // Set to 1. The second X-carriage always homes to the maximum endstop position
   #define X2_HOME_POS X2_MAX_POS // Default X2 home position. Set to X2_MAX_POS.
                       // However: In this mode the HOTEND_OFFSET_X value for the second extruder provides a software
@@ -559,7 +559,7 @@
   #define DEFAULT_DUAL_X_CARRIAGE_MODE DXC_AUTO_PARK_MODE
 
   // Default x offset in duplication mode (typically set to half print bed width)
-  #define DEFAULT_DUPLICATION_X_OFFSET 100
+  #define DEFAULT_DUPLICATION_X_OFFSET (X_BED_SIZE / 2)
 
 #endif // DUAL_X_CARRIAGE
 
@@ -575,7 +575,8 @@
 #define Z_HOME_BUMP_MM 2
 #define HOMING_BUMP_DIVISOR { 2, 2, 4 }  // Re-Bump Speed Divisor (Divides the Homing Feedrate)
 //#define QUICK_HOME                     // If homing includes X and Y, do a diagonal move initially
-//#define HOMING_BACKOFF_MM { 0, 2, 5 }  // (mm) Move away from the endstops after homing
+//#define HOMING_BACKOFF_MM { 10, 10, 0 }  // (mm) Move away from the endstops after homing
+// ^- does not work with TMC2130 Sensorless Bump workaround
 
 // When G28 is called, this option will make Y home before X
 //#define HOME_Y_BEFORE_X
