@@ -49,7 +49,7 @@
 // #define Z_MAX_PIN          PG5
 
 #define FIL_RUNOUT_PIN     PE10
-#define FIL_RUNOUT2_PIN    PG5
+#define FIL_RUNOUT2_PIN    PE15
 
 
 //
